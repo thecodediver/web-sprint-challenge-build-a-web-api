@@ -26,7 +26,6 @@ router.get("/:id", (req, res) => {
 })
 
 router.post("/", (req, res) => {
-  if(req.body.project_id && req.body.notes && req.body.description) {
     Actions.insert(req.body)
     .then(data => {
       res.status(200).json(data)
@@ -34,22 +33,23 @@ router.post("/", (req, res) => {
     .catch(err => {
       res.status(400).json(err.message)
     })
-  } else {
-    res.status(400)
-  }
 })
 
-router.put("/:id", (req, res) => {
-  if(req.body.id && req.body.project_id && req.body.description && req.body.notes) {
-    Actions.update(req.params.id, req.body)
-    .then(data => {
-      res.status(200).json(data)
-    })
-    .catch(err => {
-      res.status(500).json(err.message)
-    })
+router.put('/:id', (req, res) => {
+  const changes = req.body
+  const { id } = req.params
+  if (!req.body.description || !req.body.notes) {
+    res.status(400).json({ message: "name, description, notes, and id are required"})
   } else {
-    res.status(400)
+    Actions.update(id, changes)
+    .then(action => {
+        res.status(200).json(action)
+    })
+    .catch(error => {
+        res.status(500).json({
+            message: 'Error updating action'
+        })
+    })
   }
 })
 
