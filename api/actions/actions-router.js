@@ -14,14 +14,32 @@ router.get("/", (req, res) => {
 router.get("/:id", (req, res) => {
   Actions.get(req.params.id)
   .then(data => {
-    res.status(200).json(data)
+    if(data) {
+      res.status(200).json(data)
+    } else {
+      res.status(404).json("Not Found")
+    }
   })
   .catch(err => {
-    res.status(500).json(err.message)
+    res.status(404).json(err.message)
   })
 })
 
 router.post("/", (req, res) => {
+  if(req.body.project_id && req.body.notes && req.body.description) {
+    Actions.insert(req.body)
+    .then(data => {
+      res.status(200).json(data)
+    })
+    .catch(err => {
+      res.status(400).json(err.message)
+    })
+  } else {
+    res.status(400)
+  }
+})
+
+router.get("/", (req, res) => {
   Actions.insert(req.body)
   .then(data => {
     res.status(200).json(data)
@@ -31,17 +49,27 @@ router.post("/", (req, res) => {
   })
 })
 
-router.put("/", (req, res) => {
-  Actions.update(req.id, req.body)
+router.put("/:id", (req, res) => {
+  if(req.body.id && req.body.project_id && req.body.description && req.body.notes) {
+    Actions.update(req.params.id, req.body)
+    .then(data => {
+      res.status(200).json(data)
+    })
+    .catch(err => {
+      res.status(500).json(err.message)
+    })
+  } else {
+    res.status(400)
+  }
+})
+
+router.delete("/:id", (req, res) => {
+  Actions.remove(req.params.id)
   .then(data => {
     res.status(200).json(data)
   })
-})
-
-router.delete("/", (req, res) => {
-  Actions.remove(req.body.id)
-  .then(() => {
-    res.status(200)
+  .catch(err => {
+    res.status(500).json(err.message)
   })
 })
 

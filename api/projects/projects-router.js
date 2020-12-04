@@ -14,7 +14,12 @@ router.get("/", (req, res) => {
 router.get("/:id", (req, res) => {
   Projects.get(req.params.id)
   .then(data => {
-    res.status(200).json(data)
+    if(data) {
+      res.status(200).json(data)
+    } else {
+      res.status(404)
+    }
+    
   })
   .catch(err => {
     res.status(500).json(err.message)
@@ -31,13 +36,13 @@ router.post("/", (req, res) => {
   })
 })
 
-router.put("/", (req, res) => {
-  Projects.update(req.body)
+router.put("/:id", (req, res) => {
+  Projects.update(req.params.id, req.body)
   .then(data => {
     res.status(200).json(data)
   })
   .catch(err => {
-    res.status(500).json(err.message)
+    res.status(400).json(err.message)
   })
 })
 
@@ -52,7 +57,13 @@ router.delete("/", (req, res) => {
 })
 
 router.get("/:id/actions", (req, res) => {
-  res.status(200).json({ err: " You did it"})
+  Projects.getProjectActions(req.params.id)
+  .then(data => {
+    res.status(200).json(data)
+  })
+  .catch(err => {
+    res.status(500).json(err.message)
+  })
 })
 
 module.exports = router
