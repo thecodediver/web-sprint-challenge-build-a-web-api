@@ -39,16 +39,6 @@ router.post("/", (req, res) => {
   }
 })
 
-router.get("/", (req, res) => {
-  Actions.insert(req.body)
-  .then(data => {
-    res.status(200).json(data)
-  })
-  .catch(err => {
-    res.status(500).json(err.message)
-  })
-})
-
 router.put("/:id", (req, res) => {
   if(req.body.id && req.body.project_id && req.body.description && req.body.notes) {
     Actions.update(req.params.id, req.body)
